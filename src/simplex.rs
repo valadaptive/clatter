@@ -18,6 +18,11 @@ impl Simplex1d {
         Self { seed: 0 }
     }
 
+    #[inline]
+    pub const fn with_seed(seed: i32) -> Self {
+        Self { seed }
+    }
+
     #[cfg(feature = "rand")]
     #[inline]
     pub fn random<R: Rng + ?Sized>(rng: &mut R) -> Self {
@@ -106,6 +111,11 @@ impl Simplex2d {
     #[inline]
     pub const fn new() -> Self {
         Self { seed: 0 }
+    }
+
+    #[inline]
+    pub const fn with_seed(seed: i32) -> Self {
+        Self { seed }
     }
 
     #[cfg(feature = "rand")]
@@ -219,6 +229,11 @@ impl Simplex3d {
     #[inline]
     pub const fn new() -> Self {
         Self { seed: 0 }
+    }
+
+    #[inline]
+    pub const fn with_seed(seed: i32) -> Self {
+        Self { seed }
     }
 
     #[cfg(feature = "rand")]
@@ -396,6 +411,11 @@ impl Simplex4d {
     #[inline]
     pub const fn new() -> Self {
         Self { seed: 0 }
+    }
+
+    #[inline]
+    pub const fn with_seed(seed: i32) -> Self {
+        Self { seed }
     }
 
     #[cfg(feature = "rand")]
