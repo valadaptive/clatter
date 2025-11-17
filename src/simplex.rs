@@ -55,24 +55,11 @@ impl Simplex1d {
         let gx1 = gradient_1d::<S>(gi1);
         let n1 = t41 * gx1 * x1;
 
-        // n0 + n1 =
-        //    grad0 * x0 * (1 - x0^2)^4
-        //  + grad1 * (x0 - 1) * (1 - (x0 - 1)^2)^4
-        //
-        // Assuming worst-case values for grad0 and grad1, we therefore need only determine the maximum of
-        //
-        // |x0 * (1 - x0^2)^4| + |(x0 - 1) * (1 - (x0 - 1)^2)^4|
-        //
-        // for 0 ≤ x0 < 1. This can be done by root-finding on the derivative, obtaining 81 / 256 when
-        // x0 = 0.5, which we finally multiply by the maximum gradient to get the maximum value,
-        // allowing us to scale into [-1, 1]
-        const SCALE: f32 = 256.0 / (81.0 * 8.0);
         Sample {
-            value: (n0 + n1) * SCALE,
+            value: n0 + n1,
             derivative: [((t20 * t0 * gx0 * x20 + t21 * t1 * gx1 * x21) * -8.0
                 + t40 * gx0
-                + t41 * gx1)
-                * SCALE],
+                + t41 * gx1)],
         }
     }
 }
@@ -157,11 +144,8 @@ impl Simplex2d {
         let g2 = gx2 * x2 + gy2 * y2;
         let n2 = t42 * g2;
 
-        // Scaling factor found by numerical optimization
-        const SCALE: f32 = 45.26450774985561631259;
-
         Sample {
-            value: (n0 + n1 + n2) * SCALE,
+            value: n0 + n1 + n2,
             derivative: {
                 let temp0 = t20 * t0 * g0;
                 let mut dnoise_dx = temp0 * x0;
@@ -176,8 +160,6 @@ impl Simplex2d {
                 dnoise_dy *= -8.0;
                 dnoise_dx += t40 * gx0 + t41 * gx1 + t42 * gx2;
                 dnoise_dy += t40 * gy0 + t41 * gy1 + t42 * gy2;
-                dnoise_dx *= SCALE;
-                dnoise_dy *= SCALE;
                 [dnoise_dx, dnoise_dy]
             },
         }
@@ -283,10 +265,8 @@ impl Simplex3d {
         let g3d = g3.dot([x3, y3, z3]);
         let v3 = t43 * g3d;
 
-        // Scaling factor found by numerical optimization
-        const SCALE: f32 = 67.79816627147162;
         Sample {
-            value: (v3 + v2 + v1 + v0) * SCALE,
+            value: v3 + v2 + v1 + v0,
             derivative: {
                 let temp0 = t20 * t0 * g0d;
                 let mut dnoise_dx = temp0 * x0;
@@ -314,10 +294,6 @@ impl Simplex3d {
                 dnoise_dx += t40 * gx0 + t41 * gx1 + t42 * gx2 + t43 * gx3;
                 dnoise_dy += t40 * gy0 + t41 * gy1 + t42 * gy2 + t43 * gy3;
                 dnoise_dz += t40 * gz0 + t41 * gz1 + t42 * gz2 + t43 * gz3;
-                // Scale into range
-                dnoise_dx *= SCALE;
-                dnoise_dy *= SCALE;
-                dnoise_dz *= SCALE;
                 [dnoise_dx, dnoise_dy, dnoise_dz]
             },
         }
@@ -487,10 +463,8 @@ impl Simplex4d {
         let n3 = t34 * g3d;
         let n4 = t44 * g4d;
 
-        // Scaling factor found by numerical optimization
-        const SCALE: f32 = 62.77772078955791;
         Sample {
-            value: (n0 + n1 + n2 + n3 + n4) * SCALE,
+            value: n0 + n1 + n2 + n3 + n4,
             derivative: {
                 let temp = t02 * t0 * g0d;
                 let mut dvdx = temp * x0;
@@ -537,7 +511,7 @@ impl Simplex4d {
                 dvdz += t04 * g0[2] + t14 * g1[2] + t24 * g2[2] + t34 * g3[2] + t44 * g4[2];
                 dvdw += t04 * g0[3] + t14 * g1[3] + t24 * g2[3] + t34 * g3[3] + t44 * g4[3];
 
-                [dvdx, dvdy, dvdz, dvdw].map(|x| x * SCALE)
+                [dvdx, dvdy, dvdz, dvdw]
             },
         }
     }
